@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import {prop, getModelForClass} from '@typegoose/typegoose'
+import UserModel from '../models/UserModel';
+
 
 mongoose.connect('mongodb://mongo:27017/AtlasHouse-api', {useNewUrlParser: true, useUnifiedTopology: true})
 
@@ -7,25 +8,14 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', async () => {
 
-    class TypedUserClass {
-        @prop()
-        public name?: string
+    
 
-        @prop()
-        public email?: string
-    }
-
-    const TypedUser = getModelForClass(TypedUserClass)
-
-    const testTypeUser = new TypedUser({
-        name: "typeVik",
+    let document = await UserModel.create({
+        name: "banana25",
         email: "type@gmail.com"
-    })
+    });
 
-    let document = await TypedUser.create({
-        name: "typeVik",
-        email: "type@gmail.com"
-    })
+    document.save()
     console.log(document);
     
 
@@ -45,8 +35,8 @@ db.once('open', async () => {
 
     // const User = mongoose.model('User', userSchema)
 
-    // const testUser = new User({
-    //     name: "Vik4",
+    // const testUser = User.create({
+    //     name: "apple1",
     //     email: 'v4ik@gmail.com'
     // })
 
