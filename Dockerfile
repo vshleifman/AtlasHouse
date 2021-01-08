@@ -1,4 +1,4 @@
-FROM node:15-alpine
+FROM node:14.15-buster-slim
 
 WORKDIR /app
 
@@ -7,7 +7,10 @@ RUN chmod +x /wait-for
 
 COPY package.json package-lock.json ./
 RUN npm i
+RUN apt update
+RUN apt install -y netcat
 
 COPY . .
 
-CMD /wait-for mongo:27017 -- npm run start:dev                                  
+CMD /wait-for mongo:27017 -- npm run start:dev
+
