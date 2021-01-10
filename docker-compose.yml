@@ -14,6 +14,16 @@ services:
     stdin_open: true
     tty: true
     build: .
+    labels:
+      traefik.http.routers.ah_backend.rule: Host(`${DOMAIN}`) && PathPrefix(`/api`)
+      traefik.http.routers.ah_backend.middlewares: api-stripprefix
+      traefik.http.middlewares.api-stripprefix.stripprefix.prefixes: /api
+      traefik.http.routers.ah_backend.entrypoints: websecure
+      traefik.http.routers.ah_backend.tls.certresolver: cfdnsresolver
+      traefik.http.routers.ah_backend.tls.domains[0].main: ${DOMAIN}
+      traefik.http.routers.ah_backend.tls.domains[0].sans: www.${DOMAIN}
+    # ports:
+    #   - 3001:3001
     expose:
       - 3001
     depends_on:
@@ -29,3 +39,7 @@ services:
     # environment:
     #   ME_CONFIG_MONGODB_ADMINUSERNAME: root
     #   ME_CONFIG_MONGODB_ADMINPASSWORD: example
+networks:
+  default:
+    external:
+      name: traefik
