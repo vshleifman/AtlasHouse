@@ -7,7 +7,7 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "if test \"$NODE_ENV\" = \"production\"; then npm run start:prod; else npm run start:dev; fi",
 		"start:prod": "ts-node src",
-		"start:dev": "ts-node-dev --respawn --poll --transpile-only src",
+		"start:dev": "ts-node-dev --respawn --poll src",
 		"mongoose": "ts-node-dev src/db/mongoose.ts"
 	},
 	"author": "",

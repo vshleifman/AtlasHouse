@@ -1,6 +1,10 @@
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { prop, getModelForClass, pre } from '@typegoose/typegoose';
 import isEmail from 'validator/lib/isEmail';
 
+@pre<User>('save', function () {
+	// eslint-disable-next-line @typescript-eslint/no-this-alias
+	const user = this;
+})
 export class User {
 	@prop({ required: true, trim: true })
 	public firstName?: string;
