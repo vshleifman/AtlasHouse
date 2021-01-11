@@ -1,7 +1,7 @@
 import { prop, getModelForClass } from '@typegoose/typegoose';
 import isEmail from 'validator/lib/isEmail';
 
-class User {
+export class User {
 	@prop({ required: true, trim: true })
 	public firstName?: string;
 

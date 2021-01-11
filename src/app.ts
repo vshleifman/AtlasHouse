@@ -2,13 +2,14 @@ import './db/mongoose';
 
 import express from 'express';
 
-const app = express();
-const port = process.env.PORT || 3001;
+import userRouter from './api/UserRoutes';
+
+export const app = express();
+app.use(express.json());
+app.use(userRouter);
 
 app.get('/', (req, res) => {
 	res.send('Hello Worald');
 });
 
-app.listen(port, () => {
-	console.log(`App listening on port ${port}`);
-});
+console.log('app.ts');
