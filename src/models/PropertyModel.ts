@@ -6,12 +6,12 @@ import {
 } from '@typegoose/typegoose';
 
 @ModelOptions({ options: { allowMixed: Severity.ALLOW } })
-class Property {
+export class Property {
 	@prop({ required: true, trim: true })
-	public name?: string;
+	public name!: string;
 
 	@prop({ required: true, trim: true, unique: true })
-	public codeID?: string;
+	public codeID!: string;
 
 	@prop()
 	public price?: number;

@@ -1,16 +1,32 @@
-import { prop, getModelForClass, pre } from '@typegoose/typegoose';
+import {
+	prop,
+	getModelForClass,
+	pre,
+	DocumentType,
+} from '@typegoose/typegoose';
 import isEmail from 'validator/lib/isEmail';
+import bcrypt from 'bcrypt';
+import { UnauthorizedException } from '../services/exceptions/MyError';
 
-@pre<User>('save', function () {
-	// eslint-disable-next-line @typescript-eslint/no-this-alias
+@pre<User>('save', async function () {
 	const user = this;
+	user.password = await bcrypt.hash(user.password, 8);
+	console.log('preSsave hook');
 })
+// @pre<User>('findOneAndUpdate', async function () {
+// 	const user = this;
+
+// 	if (user.isModified('password')) {
+// 		user.password = await bcrypt.hash(user.password, 8);
+// 		console.log('modified');
+// 	}
+// })
 export class User {
-	@prop({ required: true, trim: true })
-	public firstName?: string;
+	@prop({ required: true, immutable: true, trim: true })
+	public firstName!: string;
 
 	@prop({ required: true, trim: true })
-	public lastName?: string;
+	public lastName!: string;
 
 	@prop({
 		required: true,
@@ -23,7 +39,7 @@ export class User {
 			return true;
 		},
 	})
-	public email?: string;
+	public email!: string;
 
 	@prop({
 		required: true,
@@ -36,7 +52,7 @@ export class User {
 			return true;
 		},
 	})
-	public password?: string;
+	public password!: string;
 
 	@prop({ trim: true })
 	public telNum?: string;
@@ -58,6 +74,24 @@ export class User {
 
 	@prop()
 	public checkOut?: Date;
+
+	public static async findByCredentials(
+		email: string,
+		password: string,
+	): Promise<User> {
+		const user = await UserModel.findOne({ email });
+		if (!user) {
+			throw new UnauthorizedException('Unable to login');
+		}
+
+		const isMatch = bcrypt.compare(password, user.password);
+
+		if (!isMatch) {
+			throw new UnauthorizedException('Unable to login');
+		}
+
+		return user;
+	}
 }
 
 const UserModel = getModelForClass(User);

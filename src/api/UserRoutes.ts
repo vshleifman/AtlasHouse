@@ -1,54 +1,58 @@
 import express from 'express';
+import { NotFoundException } from '../services/exceptions/MyError';
 import {
-	createUser,
-	fetchUser,
-	fetchUsers,
+	deleteUser,
+	getUser,
+	getUsers,
 	updateUser,
 } from '../services/UserService';
-// import User from '../models/UserModel';
 
 const router = express.Router();
 
-router.post('/users', async (req, res) => {
-	const result = await createUser(req.body);
-
-	if (result.email) {
-		res.status(201).send(result);
-	} else {
-		res.status(400).send(result);
-	}
-});
-
 router.get('/users', async (req, res) => {
-	const result = await fetchUsers();
-
-	if (result.length) {
+	try {
+		const result = await getUsers();
 		res.status(200).send(result);
-	} else {
-		res.status(500).send(result);
+	} catch (error) {
+		res.status(error.code).send(error.msg);
 	}
 });
 
-router.get('/users/:id', async (req, res) => {
-	const id = req.params.id;
-	const result = await fetchUser(id);
+// router.get('/users/:id', async (req, res) => {
+// 	const id = req.params.id;
 
-	if (result?.email) {
-		res.status(200).send(result);
-	} else {
-		res.status(404).send('User not found');
-	}
-});
+// 	try {
+// 		const result = await getUser(id);
+// 		res.status(200).send(result);
+// 	} catch (error) {
+// 		res.status(error.code).send(error.msg);
+// 	}
+// });
 
-router.patch('/users/:id', async (req, res) => {
-	const id = req.params.id;
-	const result = await updateUser(id, req.body);
+// router.patch('/users/:id', async (req, res) => {
+// 	const id = req.params.id;
 
-	if (typeof result === 'string') {
-		res.send({ error: result });
-	} else {
-		res.status(200).send(result);
-	}
-});
+// 	try {
+// 		const result = await updateUser(id, req.body);
+// 		res.status(200).send(result);
+// 	} catch (error) {
+// 		if (error instanceof NotFoundException) {
+// 			res.status(error.code).send(error.msg);
+// 		}
+
+// 		res.status(500).send({ error });
+// 	}
+// });
+
+// router.delete('/users/:id', async (req, res) => {
+// 	const id = req.params.id;
+
+// 	try {
+// 		const result = await deleteUser(id);
+// 		res.status(200).send(result);
+// 	} catch (error) {
+// 		res.status(error.code).send(error.msg);
+// 	}
+// });
 
 export default router;

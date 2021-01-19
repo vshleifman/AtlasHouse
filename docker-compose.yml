@@ -9,6 +9,8 @@ services:
     #   MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - 2717:27017
+    volumes:
+      - /src/db:/data/db
 
   backend:
     stdin_open: true
