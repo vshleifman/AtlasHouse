@@ -10,7 +10,7 @@ services:
     ports:
       - 2717:27017
     volumes:
-      - /src/db:/data/db
+      - ./src/db:/data/db
 
   backend:
     stdin_open: true
@@ -24,14 +24,15 @@ services:
       traefik.http.routers.ah_backend.tls.certresolver: cfdnsresolver
       traefik.http.routers.ah_backend.tls.domains[0].main: ${DOMAIN}
       traefik.http.routers.ah_backend.tls.domains[0].sans: www.${DOMAIN}
-    # ports:
-    #   - 3001:3001
-    expose:
-      - 3001
+    ports:
+      - 3001:3001
+    # expose:
+    #   - 3001
     depends_on:
       - mongo
     volumes:
       - './:/app'
+      - '/app/node_modules'
 
   mongo-express:
     image: mongo-express
