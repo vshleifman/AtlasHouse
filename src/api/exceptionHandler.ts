@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import {
 	BadRequestException,
 	NotFoundException,
@@ -13,7 +14,7 @@ enum ApiError {
 }
 
 const sendError = (
-	res: any,
+	res: Response,
 	httpCode: number,
 	code: ApiError,
 	msg: string,
@@ -22,7 +23,7 @@ const sendError = (
 	res.status(httpCode).json({ code, msg, target });
 };
 
-export default (error: Error, res: any): void => {
+const exceptionHandler = (error: Error, req: Request, res: Response): void => {
 	if (error instanceof NotFoundException) {
 		sendError(res, 404, ApiError.NotFound, error.message);
 	}
@@ -39,3 +40,5 @@ export default (error: Error, res: any): void => {
 		sendError(res, 400, ApiError.BadRequest, error.message);
 	}
 };
+
+export default exceptionHandler;

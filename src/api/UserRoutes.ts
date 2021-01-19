@@ -14,20 +14,20 @@ router.get('/users', async (req, res) => {
 		const result = await getUsers();
 		res.status(200).send(result);
 	} catch (error) {
-		res.status(error.code).send(error.msg);
+		res.send(error);
 	}
 });
 
-// router.get('/users/:id', async (req, res) => {
-// 	const id = req.params.id;
+router.get('/users/:id', async (req, res) => {
+	const id = req.params.id;
 
-// 	try {
-// 		const result = await getUser(id);
-// 		res.status(200).send(result);
-// 	} catch (error) {
-// 		res.status(error.code).send(error.msg);
-// 	}
-// });
+	try {
+		const result = await getUser(id);
+		res.status(200).send(result);
+	} catch (error) {
+		res.status(error.code).send(error.msg);
+	}
+});
 
 // router.patch('/users/:id', async (req, res) => {
 // 	const id = req.params.id;

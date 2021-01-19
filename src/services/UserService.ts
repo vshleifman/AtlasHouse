@@ -7,19 +7,19 @@ import {
 } from './exceptions/MyError';
 
 export const getUsers = async (): Promise<User[]> => {
-	try {
-		const result = await UserModel.find();
-		if (result.length === 0) {
-			throw new NotFoundException('No User Found');
-		}
-		return result;
-	} catch (error) {
-		if (error instanceof NotFoundException) {
-			throw error;
-		} else {
-			throw new ServerException(error);
-		}
+	// try {
+	const result = await UserModel.find();
+	if (result.length === 0) {
+		throw new NotFoundException('No User Found');
 	}
+	return result;
+	// } catch (error: unknown) {
+	// 	if (error instanceof NotFoundException) {
+	// 		throw error;
+	// 	} else {
+	// 		throw error;
+	// 	}
+	// }
 };
 
 export const getUser = async (_id: string): Promise<DocumentType<User>> => {

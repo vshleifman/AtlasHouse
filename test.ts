@@ -16,18 +16,21 @@ const func = (a: number) => {
 
 const wrapper = () => {
 	try {
-		const result = func(2);
-		return result;
-	} catch (e) {
-		return e;
+		// const result = func(2);
+		// return result;
+		throw new Error('baranka');
+	} catch (e: unknown) {
+		return e as Error;
 	}
 };
 
 const levelUp = () => {
-	try {
-		return wrapper();
-	} catch (e) {
-		return e;
-	}
+	throw new Error('banak');
+	// try {
+	// 	console.log(wrapper());
+	// } catch (e) {
+	// 	console.log('caught');
+	// }
 };
 console.log(levelUp());
+throw new Error('13');
