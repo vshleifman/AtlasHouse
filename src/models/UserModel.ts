@@ -6,12 +6,17 @@ import {
 } from '@typegoose/typegoose';
 import isEmail from 'validator/lib/isEmail';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { UnauthorizedException } from '../services/exceptions/MyExceptions';
 
 @pre<User>('save', async function () {
 	const user = this;
-	user.password = await bcrypt.hash(user.password, 8);
-	console.log('preSsave hook');
+	console.log(user.password, 1);
+	if (user.isModified('password')) {
+		user.password = await bcrypt.hash(user.password, 8);
+	}
+
+	console.log(user.password, 2);
 })
 // @pre<User>('findOneAndUpdate', async function () {
 // 	const user = this;
@@ -75,21 +80,34 @@ export class User {
 	@prop()
 	public checkOut?: Date;
 
+	@prop({ required: true })
+	public tokens!: { token: string }[];
+
 	public static async findByCredentials(
 		email: string,
 		password: string,
 	): Promise<User> {
 		const user = await UserModel.findOne({ email });
 		if (!user) {
-			throw new UnauthorizedException('Unable to login');
+			throw new UnauthorizedException('Unable to login1');
 		}
 		const isMatch = await bcrypt.compare(password, user.password);
+		console.log({ isMatch, password, up: user.password });
 
 		if (!isMatch) {
-			throw new UnauthorizedException('Unable to login');
+			throw new UnauthorizedException('Unable to login2');
 		}
 
 		return user;
+	}
+
+	public async generateAuthToken(this: DocumentType<User>): Promise<string> {
+		const user = this;
+		const token = jwt.sign({ id: user._id.toString() }, 'some.string');
+
+		user.tokens = user.tokens.concat({ token });
+		await user.save();
+		return token;
 	}
 }
 
