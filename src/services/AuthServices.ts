@@ -1,7 +1,7 @@
 import UserModel, { User } from '../models/UserModel';
-import { ServerException } from './exceptions/MyError';
+import { ServerException } from './exceptions/MyExceptions';
 
-export const signup = async (data: User): Promise<User> => {
+const signup = async (data: User): Promise<User> => {
 	try {
 		return await UserModel.create(data);
 	} catch (error) {
@@ -9,13 +9,8 @@ export const signup = async (data: User): Promise<User> => {
 	}
 };
 
-export const signin = async (
-	email: string,
-	password: string,
-): Promise<User> => {
-	try {
-		return await UserModel.findByCredentials(email, password);
-	} catch (error) {
-		return error;
-	}
+const signin = async (email: string, password: string): Promise<User> => {
+	return await UserModel.findByCredentials(email, password);
 };
+
+export default { signin, signup };

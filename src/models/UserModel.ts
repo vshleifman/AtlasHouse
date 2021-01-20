@@ -6,7 +6,7 @@ import {
 } from '@typegoose/typegoose';
 import isEmail from 'validator/lib/isEmail';
 import bcrypt from 'bcrypt';
-import { UnauthorizedException } from '../services/exceptions/MyError';
+import { UnauthorizedException } from '../services/exceptions/MyExceptions';
 
 @pre<User>('save', async function () {
 	const user = this;
@@ -83,8 +83,7 @@ export class User {
 		if (!user) {
 			throw new UnauthorizedException('Unable to login');
 		}
-
-		const isMatch = bcrypt.compare(password, user.password);
+		const isMatch = await bcrypt.compare(password, user.password);
 
 		if (!isMatch) {
 			throw new UnauthorizedException('Unable to login');

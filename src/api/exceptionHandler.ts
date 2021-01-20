@@ -4,7 +4,7 @@ import {
 	NotFoundException,
 	ServerException,
 	UnauthorizedException,
-} from '../services/exceptions/MyError';
+} from '../services/exceptions/MyExceptions';
 
 enum ApiError {
 	NotFound = 'NotFound',
@@ -28,7 +28,7 @@ const exceptionHandler = (
 	_: Request,
 	res: Response,
 	next: NextFunction,
-) => {
+): void => {
 	if (error instanceof NotFoundException) {
 		sendError(res, 404, ApiError.NotFound, error.message);
 	}

@@ -1,58 +1,49 @@
 import express from 'express';
-import { NotFoundException } from '../services/exceptions/MyError';
-import {
-	deleteUser,
-	getUser,
-	getUsers,
-	updateUser,
-} from '../services/UserService';
+import UserService from '../services/UserService';
 
 const router = express.Router();
 
-router.get('/users', async (req, res) => {
+router.get('/users', async (req, res, next) => {
 	try {
-		const result = await getUsers();
+		const result = await UserService.getAll();
 		res.status(200).send(result);
 	} catch (error) {
-		res.send(error);
+		next(error);
 	}
 });
 
-router.get('/users/:id', async (req, res) => {
+router.get('/users/:id', async (req, res, next) => {
 	const id = req.params.id;
 
 	try {
-		const result = await getUser(id);
+		const result = await UserService.getOne(id);
 		res.status(200).send(result);
 	} catch (error) {
-		res.status(error.code).send(error.msg);
+		console.log(error);
+		next(error);
 	}
 });
 
-// router.patch('/users/:id', async (req, res) => {
-// 	const id = req.params.id;
+router.patch('/users/:id', async (req, res, next) => {
+	const id = req.params.id;
 
-// 	try {
-// 		const result = await updateUser(id, req.body);
-// 		res.status(200).send(result);
-// 	} catch (error) {
-// 		if (error instanceof NotFoundException) {
-// 			res.status(error.code).send(error.msg);
-// 		}
+	try {
+		const result = await UserService.update(id, req.body);
+		res.status(200).send(result);
+	} catch (error) {
+		next(error);
+	}
+});
 
-// 		res.status(500).send({ error });
-// 	}
-// });
+router.delete('/users/:id', async (req, res, next) => {
+	const id = req.params.id;
 
-// router.delete('/users/:id', async (req, res) => {
-// 	const id = req.params.id;
-
-// 	try {
-// 		const result = await deleteUser(id);
-// 		res.status(200).send(result);
-// 	} catch (error) {
-// 		res.status(error.code).send(error.msg);
-// 	}
-// });
+	try {
+		const result = await UserService.deleteOne(id);
+		res.status(200).send(result);
+	} catch (error) {
+		next(error);
+	}
+});
 
 export default router;

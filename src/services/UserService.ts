@@ -3,26 +3,13 @@ import UserModel, { User } from '../models/UserModel';
 import {
 	BadRequestException,
 	NotFoundException,
-	ServerException,
-} from './exceptions/MyError';
+} from './exceptions/MyExceptions';
 
-export const getUsers = async (): Promise<User[]> => {
-	// try {
-	const result = await UserModel.find();
-	if (result.length === 0) {
-		throw new NotFoundException('No User Found');
-	}
-	return result;
-	// } catch (error: unknown) {
-	// 	if (error instanceof NotFoundException) {
-	// 		throw error;
-	// 	} else {
-	// 		throw error;
-	// 	}
-	// }
+const getAll = async (): Promise<User[]> => {
+	return await UserModel.find();
 };
 
-export const getUser = async (_id: string): Promise<DocumentType<User>> => {
+const getOne = async (_id: string): Promise<DocumentType<User>> => {
 	try {
 		const result = await UserModel.findById(_id);
 		if (!result) {
@@ -31,16 +18,13 @@ export const getUser = async (_id: string): Promise<DocumentType<User>> => {
 		return result;
 	} catch (error) {
 		if (error.kind === 'ObjectId') {
-			throw new BadRequestException(error);
-		} else if (error instanceof NotFoundException) {
-			throw error;
-		} else {
-			throw new ServerException(error);
+			throw new BadRequestException('Wrong User Id');
 		}
+		throw error;
 	}
 };
 
-export const updateUser = async (
+const update = async (
 	id: string,
 	data: Partial<User>,
 ): Promise<DocumentType<User>> => {
@@ -86,7 +70,7 @@ export const updateUser = async (
 	// }
 };
 
-export const deleteUser = async (_id: string): Promise<DocumentType<User>> => {
+const deleteOne = async (_id: string): Promise<DocumentType<User>> => {
 	try {
 		const result = await UserModel.findByIdAndDelete(_id);
 		if (!result) {
@@ -94,10 +78,11 @@ export const deleteUser = async (_id: string): Promise<DocumentType<User>> => {
 		}
 		return result;
 	} catch (error) {
-		if (error instanceof NotFoundException) {
-			throw error;
-		} else {
-			throw new ServerException(error);
+		if (error.kind === 'ObjectId') {
+			throw new BadRequestException('Wrong User Id');
 		}
+		throw error;
 	}
 };
+
+export default { getAll, getOne, update, deleteOne };

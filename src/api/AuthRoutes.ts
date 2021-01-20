@@ -1,23 +1,23 @@
 import express from 'express';
-import { signup, signin } from '../services/AuthServices';
+import AuthServices from '../services/AuthServices';
 
 const router = express.Router();
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', async (req, res, next) => {
 	try {
-		const result = await signup(req.body);
+		const result = await AuthServices.signup(req.body);
 		res.status(201).send(result);
 	} catch (error) {
-		res.status(error.code).send(error.msg);
+		next(error);
 	}
 });
 
-router.post('/signin', async (req, res) => {
+router.post('/signin', async (req, res, next) => {
 	try {
-		const result = await signin(req.body.email, req.body.password);
+		const result = await AuthServices.signin(req.body.email, req.body.password);
 		res.status(200).send(result);
 	} catch (error) {
-		res.status(error.code).send(error.msg);
+		next(error);
 	}
 });
 
