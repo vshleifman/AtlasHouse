@@ -1,9 +1,10 @@
 import express from 'express';
+import auth from '../middleware/auth';
 import UserService from '../services/UserService';
 
 const router = express.Router();
 
-router.get('/users', async (req, res, next) => {
+router.get('/users', auth, async (req, res, next) => {
 	try {
 		const result = await UserService.getAll();
 		res.status(200).send(result);
@@ -35,7 +36,7 @@ router.patch('/users/:id', async (req, res, next) => {
 	}
 });
 
-router.delete('/users/:id', async (req, res, next) => {
+router.delete('/users/:id', auth, async (req, res, next) => {
 	const id = req.params.id;
 
 	try {

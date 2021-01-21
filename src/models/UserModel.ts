@@ -3,6 +3,8 @@ import {
 	getModelForClass,
 	pre,
 	DocumentType,
+	Severity,
+	ModelOptions,
 } from '@typegoose/typegoose';
 import isEmail from 'validator/lib/isEmail';
 import bcrypt from 'bcrypt';
@@ -11,12 +13,9 @@ import { UnauthorizedException } from '../services/exceptions/MyExceptions';
 
 @pre<User>('save', async function () {
 	const user = this;
-	console.log(user.password, 1);
 	if (user.isModified('password')) {
 		user.password = await bcrypt.hash(user.password, 8);
 	}
-
-	console.log(user.password, 2);
 })
 // @pre<User>('findOneAndUpdate', async function () {
 // 	const user = this;
@@ -26,6 +25,7 @@ import { UnauthorizedException } from '../services/exceptions/MyExceptions';
 // 		console.log('modified');
 // 	}
 // })
+@ModelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class User {
 	@prop({ required: true, immutable: true, trim: true })
 	public firstName!: string;
@@ -103,7 +103,7 @@ export class User {
 
 	public async generateAuthToken(this: DocumentType<User>): Promise<string> {
 		const user = this;
-		const token = jwt.sign({ id: user._id.toString() }, 'some.string');
+		const token = jwt.sign({ _id: user._id.toString() }, 'some.string');
 
 		user.tokens = user.tokens.concat({ token });
 		await user.save();
