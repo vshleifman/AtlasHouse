@@ -1,5 +1,6 @@
 import express from 'express';
-import auth, { Req } from '../middleware/auth';
+import { Req } from '../types/types';
+import auth from '../middleware/auth';
 import UserServices from '../services/UserServices';
 const router = express.Router();
 

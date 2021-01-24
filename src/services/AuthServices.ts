@@ -1,12 +1,33 @@
 import { DocumentType } from '@typegoose/typegoose';
-import UserModel, { User } from '../models/UserModel';
+import { UserType } from '../types/types';
+import {
+	AdminModel,
+	Admin,
+	UserModel,
+	User,
+	ProtoUser,
+	ProtoUserModel,
+} from '../models/UserModel';
 import { ServerException } from './exceptions/MyExceptions';
 
-const signup = async (data: User): Promise<{ user: User; token: string }> => {
+const signup = async (
+	data: { user: ProtoUser; type: string }, // partial?
+): Promise<{
+	user: DocumentType<Admin> | DocumentType<User>;
+	token: string;
+}> => {
 	try {
-		const user = await UserModel.create(data);
-		const token = await user.generateAuthToken();
-		return { user, token };
+		if (data.type === UserType.ADMIN) {
+			const user = await AdminModel.create(data.user);
+			const token = await user.generateAuthToken();
+			return { user, token };
+		}
+		if (data.type === UserType.USER) {
+			const user = await UserModel.create(data.user);
+			const token = await user.generateAuthToken();
+			return { user, token };
+		}
+		throw new Error('what?');
 	} catch (error) {
 		throw new ServerException(error);
 	}
@@ -15,11 +36,11 @@ const signup = async (data: User): Promise<{ user: User; token: string }> => {
 const signin = async (
 	email: string,
 	password: string,
-): Promise<{ user: User; token: string }> => {
-	const user = (await UserModel.findByCredentials(
+): Promise<{ user: ProtoUser; token: string }> => {
+	const user = (await ProtoUserModel.findByCredentials(
 		email,
 		password,
-	)) as DocumentType<User>;
+	)) as DocumentType<ProtoUser>;
 	const token = await user.generateAuthToken();
 	return { user, token };
 };

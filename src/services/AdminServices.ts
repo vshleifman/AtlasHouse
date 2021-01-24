@@ -1,5 +1,5 @@
 import { DocumentType } from '@typegoose/typegoose';
-import UserModel, { User } from 'models/UserModel';
+import { UserModel, User } from '../models/UserModel';
 import {
 	BadRequestException,
 	NotFoundException,

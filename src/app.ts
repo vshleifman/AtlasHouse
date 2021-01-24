@@ -4,6 +4,7 @@ import express from 'express';
 
 import userRouter from './api/UserRoutes';
 import authRouter from './api/AuthRoutes';
+import adminRouter from './api/AdminRoutes';
 
 import exceptionHandler from './api/exceptionHandler';
 
@@ -12,6 +13,7 @@ app.use(express.json());
 
 app.use(userRouter);
 app.use(authRouter);
+app.use(adminRouter);
 
 app.get('/', (req, res) => {
 	res.send('Hello Worald');

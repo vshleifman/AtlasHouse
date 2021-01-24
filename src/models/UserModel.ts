@@ -5,13 +5,14 @@ import {
 	DocumentType,
 	Severity,
 	ModelOptions,
+	getDiscriminatorModelForClass,
 } from '@typegoose/typegoose';
 import isEmail from 'validator/lib/isEmail';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UnauthorizedException } from '../services/exceptions/MyExceptions';
 
-@pre<User>('save', async function () {
+@pre<ProtoUser>('save', async function () {
 	const user = this;
 	if (user.isModified('password')) {
 		user.password = await bcrypt.hash(user.password, 8);
@@ -25,9 +26,11 @@ import { UnauthorizedException } from '../services/exceptions/MyExceptions';
 // 		console.log('modified');
 // 	}
 // })
-@ModelOptions({ options: { allowMixed: Severity.ALLOW } })
-export class User {
-	@prop({ required: true, immutable: true, trim: true })
+@ModelOptions({
+	options: { allowMixed: Severity.ALLOW },
+})
+export class ProtoUser {
+	@prop({ required: true, trim: true })
 	public firstName!: string;
 
 	@prop({ required: true, trim: true })
@@ -65,43 +68,30 @@ export class User {
 	@prop()
 	public country?: string;
 
-	@prop()
-	public rentedProperty?: string;
-
-	@prop({ default: 0 })
-	public numberOfStays?: number;
-
-	@prop({ default: false })
-	public isAdmin?: boolean;
-
-	@prop()
-	public checkIn?: Date;
-
-	@prop()
-	public checkOut?: Date;
-
 	@prop({ required: true })
 	public tokens!: { token: string }[];
 
 	public static async findByCredentials(
 		email: string,
 		password: string,
-	): Promise<User> {
-		const user = await UserModel.findOne({ email });
+	): Promise<ProtoUser> {
+		const user = await ProtoUserModel.findOne({ email });
 		if (!user) {
-			throw new UnauthorizedException('Unable to login1');
+			throw new UnauthorizedException('Unable to login');
 		}
 		const isMatch = await bcrypt.compare(password, user.password);
 		console.log({ isMatch, password, up: user.password });
 
 		if (!isMatch) {
-			throw new UnauthorizedException('Unable to login2');
+			throw new UnauthorizedException('Unable to login');
 		}
 
 		return user;
 	}
 
-	public async generateAuthToken(this: DocumentType<User>): Promise<string> {
+	public async generateAuthToken(
+		this: DocumentType<ProtoUser>,
+	): Promise<string> {
 		const user = this;
 		const token = jwt.sign({ _id: user._id.toString() }, 'some.string');
 
@@ -111,6 +101,28 @@ export class User {
 	}
 }
 
-const UserModel = getModelForClass(User);
+export class User extends ProtoUser {
+	@prop()
+	public rentedProperty?: string;
 
-export default UserModel;
+	@prop({ default: 0 })
+	public numberOfStays?: number;
+
+	@prop()
+	public checkIn?: Date;
+
+	@prop()
+	public checkOut?: Date;
+}
+export class Admin extends ProtoUser {
+	@prop()
+	public bookedProperties?: [
+		{ property: string; checkIn: Date; checkOut: Date },
+	]; //ref with PropertyModel
+}
+
+export const ProtoUserModel = getModelForClass(ProtoUser);
+export const UserModel = getDiscriminatorModelForClass(ProtoUserModel, User);
+export const AdminModel = getDiscriminatorModelForClass(ProtoUserModel, Admin);
+
+// export default { ProtoUserModel, UserModel, AdminModel };

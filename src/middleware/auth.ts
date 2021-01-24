@@ -1,11 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import UserModel, { User } from '../models/UserModel';
+import { Req } from 'types/types';
+import { ProtoUserModel } from '../models/UserModel';
 import { UnauthorizedException } from '../services/exceptions/MyExceptions';
 
-export interface Req extends Request {
-	user?: User;
-}
 const auth = async (
 	req: Req,
 	res: Response,
@@ -19,7 +17,7 @@ const auth = async (
 		}
 		try {
 			const decoded = jwt.verify(token, 'some.string') as { _id: string };
-			const user = await UserModel.findOne({
+			const user = await ProtoUserModel.findOne({
 				_id: decoded._id,
 				'tokens.token': token,
 			});
