@@ -25,6 +25,7 @@ const auth = async (
 				throw new UnauthorizedException('Please authenticate');
 			}
 
+			req.token = token;
 			req.user = user;
 		} catch (error) {
 			if (error.message === 'invalid token') {

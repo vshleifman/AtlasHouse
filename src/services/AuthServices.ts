@@ -36,7 +36,10 @@ const signup = async (
 const signin = async (
 	email: string,
 	password: string,
-): Promise<{ user: ProtoUser; token: string }> => {
+): Promise<{
+	user: DocumentType<Admin> | DocumentType<User>;
+	token: string;
+}> => {
 	const user = (await ProtoUserModel.findByCredentials(
 		email,
 		password,
@@ -45,4 +48,17 @@ const signin = async (
 	return { user, token };
 };
 
-export default { signin, signup };
+const signout = async (
+	user: DocumentType<ProtoUser>,
+	reqToken: string,
+): Promise<void> => {
+	user.tokens = user.tokens.filter(token => token.token !== reqToken);
+	await user.save();
+};
+
+const signoutAll = async (user: DocumentType<ProtoUser>): Promise<void> => {
+	user.tokens = [];
+	await user?.save();
+};
+
+export default { signin, signup, signout, signoutAll };
