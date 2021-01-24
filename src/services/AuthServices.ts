@@ -27,7 +27,7 @@ const signup = async (
 			const token = await user.generateAuthToken();
 			return { user, token };
 		}
-		throw new Error('what?');
+		throw new Error('Specify user type');
 	} catch (error) {
 		throw new ServerException(error);
 	}

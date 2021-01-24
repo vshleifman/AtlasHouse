@@ -11,6 +11,8 @@ const getAllUsers = async (): Promise<User[]> => {
 
 const getOneUser = async (_id: string): Promise<DocumentType<User>> => {
 	try {
+		console.log(_id);
+
 		const result = await UserModel.findById(_id);
 		if (!result) {
 			throw new NotFoundException();
@@ -18,7 +20,7 @@ const getOneUser = async (_id: string): Promise<DocumentType<User>> => {
 		return result;
 	} catch (error) {
 		if (error.kind === 'ObjectId') {
-			throw new BadRequestException('Wrong User Id');
+			throw new BadRequestException('Wrong User Id1');
 		}
 		throw error;
 	}
