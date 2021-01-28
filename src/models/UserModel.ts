@@ -71,6 +71,16 @@ export class ProtoUser {
 	@prop({ required: true })
 	public tokens!: { token: string }[];
 
+	public toJSON(this: DocumentType<ProtoUser>): Partial<DocumentType<User>> {
+		const user = this;
+		const userObject: Partial<DocumentType<User>> = user.toObject();
+
+		delete userObject.password;
+		delete userObject.tokens;
+
+		return userObject;
+	}
+
 	public static async findByCredentials(
 		email: string,
 		password: string,
@@ -80,7 +90,6 @@ export class ProtoUser {
 			throw new UnauthorizedException('Unable to login');
 		}
 		const isMatch = await bcrypt.compare(password, user.password);
-		console.log({ isMatch, password, up: user.password });
 
 		if (!isMatch) {
 			throw new UnauthorizedException('Unable to login');
@@ -93,7 +102,10 @@ export class ProtoUser {
 		this: DocumentType<ProtoUser>,
 	): Promise<string> {
 		const user = this;
-		const token = jwt.sign({ _id: user._id.toString() }, 'some.string');
+		const token = jwt.sign(
+			{ _id: user._id.toString() },
+			process.env['JWT_SECRET'] || 'some.string',
+		);
 
 		user.tokens = user.tokens.concat({ token });
 		await user.save();

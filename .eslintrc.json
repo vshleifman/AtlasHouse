@@ -23,6 +23,7 @@
 		"linebreak-style": ["error", "unix"],
 		"quotes": ["error", "single"],
 		"semi": ["error", "always"],
-		"@typescript-eslint/no-this-alias": "off"
+		"@typescript-eslint/no-this-alias": "off",
+		"@typescript-eslint/no-non-null-assertion": "off"
 	}
 }

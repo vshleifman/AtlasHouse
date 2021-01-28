@@ -11,8 +11,6 @@ const getAllUsers = async (): Promise<User[]> => {
 
 const getOneUser = async (_id: string): Promise<DocumentType<User>> => {
 	try {
-		console.log(_id);
-
 		const result = await UserModel.findById(_id);
 		if (!result) {
 			throw new NotFoundException();

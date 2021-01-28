@@ -16,7 +16,10 @@ const auth = async (
 			throw new UnauthorizedException('Please authenticate');
 		}
 		try {
-			const decoded = jwt.verify(token, 'some.string') as { _id: string };
+			const decoded = jwt.verify(
+				token,
+				process.env['JWT_SECRET'] || 'some.string',
+			) as { _id: string };
 			const user = await ProtoUserModel.findOne({
 				_id: decoded._id,
 				'tokens.token': token,
