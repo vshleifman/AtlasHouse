@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest --watch",
+		"test": "jest --setupFiles dotenv/config --watch",
 		"start": "if test \"$NODE_ENV\" = \"production\"; then npm run start:prod; else npm run start:dev; fi",
 		"start:prod": "ts-node src",
 		"start:dev": "ts-node-dev -r dotenv/config  --respawn --poll src"
@@ -29,14 +29,18 @@
 		"ts-node-dev": "^1.1.1"
 	},
 	"dependencies": {
+		"@types/axios": "^0.14.0",
 		"@types/bcrypt": "^3.0.0",
+		"@types/faker": "^5.1.5",
 		"@types/jsonwebtoken": "^8.5.0",
 		"@types/mongodb": "^3.6.3",
 		"@types/mongoose": "^5.10.3",
 		"@types/supertest": "^2.0.10",
+		"axios": "^0.21.1",
 		"bcrypt": "^5.0.0",
 		"dotenv": "^8.2.0",
 		"env-cmd": "^10.1.0",
+		"faker": "^5.2.0",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^5.10.18",
 		"ts-jest": "^26.4.4",

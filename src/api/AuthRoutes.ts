@@ -2,7 +2,6 @@ import express from 'express';
 import auth from '../middleware/auth';
 import { Req } from 'types/types';
 import AuthServices from '../services/AuthServices';
-import { User } from 'models/UserModel';
 
 const router = express.Router();
 

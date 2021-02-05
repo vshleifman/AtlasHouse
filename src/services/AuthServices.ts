@@ -24,8 +24,7 @@ const signup = async (
 		}
 		if (data.type === UserType.USER) {
 			const user = await UserModel.create(data.user);
-			const token = 'baranka';
-			// await user.generateAuthToken();
+			const token = await user.generateAuthToken();
 			return { user, token };
 		}
 		throw new Error('Specify user type');

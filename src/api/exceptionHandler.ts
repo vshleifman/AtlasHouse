@@ -6,20 +6,20 @@ import {
 	UnauthorizedException,
 } from '../services/exceptions/MyExceptions';
 
-enum ApiError {
+export enum ApiError {
 	NotFound = 'NotFound',
 	Unauthorized = 'Unauthorized',
 	BadRequest = 'BadRequest',
 	ServerError = 'ServerError',
 }
 
-const sendError = (
+export const sendError = (
 	res: Response,
 	httpCode: number,
 	code: ApiError,
 	msg: string,
 	target?: string,
-) => {
+): void => {
 	res.status(httpCode).json({ code, msg, target });
 };
 
