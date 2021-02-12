@@ -4,7 +4,9 @@ import express from 'express';
 
 import userRouter from './api/UserRoutes';
 import authRouter from './api/AuthRoutes';
+import propertyRouter from './api/PropertyRoutes';
 import adminRouter from './api/AdminRoutes';
+import bookingRouter from './api/BookingRoutes';
 
 import exceptionHandler from './api/exceptionHandler';
 
@@ -13,6 +15,8 @@ app.use(express.json());
 
 app.use(authRouter);
 app.use(userRouter);
+app.use(propertyRouter);
+app.use(bookingRouter);
 app.use(adminRouter);
 
 app.get('/', (req, res) => {

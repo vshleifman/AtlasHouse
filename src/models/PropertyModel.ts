@@ -3,10 +3,22 @@ import {
 	getModelForClass,
 	ModelOptions,
 	Severity,
+	mongoose,
+	ReturnModelType,
+	DocumentType,
+	Ref,
+	getName,
 } from '@typegoose/typegoose';
+import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { Booking } from '../../virtualsTest/models/ModelC';
 
-@ModelOptions({ options: { allowMixed: Severity.ALLOW } })
-export class Property {
+export interface Property extends Base {}
+
+@ModelOptions({
+	options: { allowMixed: Severity.ALLOW },
+	schemaOptions: { toJSON: { virtuals: true } },
+})
+export class Property extends TimeStamps {
 	@prop({ required: true, trim: true })
 	public name!: string;
 
@@ -19,9 +31,6 @@ export class Property {
 	@prop({ default: true })
 	public available?: boolean;
 
-	@prop()
-	public bookedDates?: { checkIn: Date; checkOut: Date }[]; //sort dates on entry?
-
 	@prop({ default: true })
 	public isCleaned?: boolean;
 
@@ -33,6 +42,19 @@ export class Property {
 
 	@prop()
 	public description?: string;
+
+	@prop({
+		ref: () => (doc: DocumentType<Property>) => doc.from!,
+		foreignField: () => 'property',
+		localField: (doc: DocumentType<Property>) => doc.local!,
+	})
+	public bookings?: Ref<Booking>[];
+
+	@prop({ default: '_id' })
+	public local?: string;
+
+	@prop({ default: 'Booking' })
+	public from?: string;
 }
 
 const PropertyModel = getModelForClass(Property);

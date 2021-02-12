@@ -1,57 +1,75 @@
+import { DocumentType, mongoose } from '@typegoose/typegoose';
 import PropertyModel, { Property } from '../models/PropertyModel';
+import {
+	BadRequestException,
+	NotFoundException,
+	ServerException,
+} from './exceptions/MyExceptions';
 
-interface Result {
-	result: string | Record<string, unknown>;
-	code: string;
-}
-
-export const addProperty = async (data: Property): Promise<Property> => {
-	try {
-		return PropertyModel.create(data);
-	} catch (error) {
-		return error;
-	}
+const getProperties = async (): Promise<DocumentType<Property>[]> => {
+	return await PropertyModel.find();
 };
 
-export const getProperties = async (): Promise<Property[]> => {
+const getProperty = async (
+	_id: mongoose.Types.ObjectId,
+): Promise<DocumentType<Property>> => {
 	try {
-		return await PropertyModel.find();
-	} catch (error) {
-		return error;
-	}
-};
-
-export const getProperty = async (_id: string): Promise<Property | null> => {
-	try {
-		return PropertyModel.findById(_id);
-	} catch (error) {
-		return error;
-	}
-};
-
-export const updateProperty = async (
-	_id: string,
-	data: Property,
-): Promise<Property | Result> => {
-	try {
-		const updates = Object.keys(data) as (keyof Property)[];
-		const property = await PropertyModel.findById(_id);
-
-		if (property?.name) {
-			updates.forEach(update => (property[update] = data[update]));
-			property.save();
-			return { result: property, code: '200' };
-		} else {
-			return { result: 'Property not found', code: '404' };
+		const result = await PropertyModel.findById(_id);
+		if (!result) {
+			throw new NotFoundException();
 		}
+		return result;
 	} catch (error) {
-		return { result: error, code: '500' };
+		if (error.kind === 'ObjectId') {
+			throw new BadRequestException('Wrong Property Id');
+		}
+		throw error;
 	}
 };
 
-export const deleteProperty = async (_id: string): Promise<Property> => {
+const addProperty = async (data: Property): Promise<DocumentType<Property>> => {
 	try {
+		return await PropertyModel.create(data);
 	} catch (error) {
-		return error;
+		throw new ServerException(error);
 	}
 };
+
+// const updateProperty = async (
+// 	_id: string,
+// 	data: Property,
+// ): Promise<Property | Result> => {
+// 	try {
+// 		const updates = Object.keys(data) as (keyof Property)[];
+// 		const property = await PropertyModel.findById(_id);
+
+// 		if (property?.name) {
+// 			updates.forEach(update => (property[update] = data[update]));
+// 			property.save();
+// 			return { result: property, code: '200' };
+// 		} else {
+// 			return { result: 'Property not found', code: '404' };
+// 		}
+// 	} catch (error) {
+// 		return { result: error, code: '500' };
+// 	}
+// };
+
+const deleteProperty = async (
+	_id: mongoose.Types.ObjectId,
+): Promise<Property> => {
+	try {
+		const result = await PropertyModel.findByIdAndDelete(_id);
+		if (!result) {
+			throw new NotFoundException();
+		}
+		return result;
+	} catch (error) {
+		if (error.kind === 'ObjectId') {
+			throw new BadRequestException('Wrong Property Id');
+		}
+		throw error;
+	}
+};
+
+export default { getProperties, getProperty, addProperty, deleteProperty };

@@ -6,11 +6,19 @@ import {
 	Severity,
 	ModelOptions,
 	getDiscriminatorModelForClass,
+	Ref,
+	getName,
 } from '@typegoose/typegoose';
 import isEmail from 'validator/lib/isEmail';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UnauthorizedException } from '../services/exceptions/MyExceptions';
+import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { Property } from './PropertyModel';
+import { Booking } from './BookingModel';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ProtoUser extends Base {}
 
 @pre<ProtoUser>('save', async function () {
 	const user = this;
@@ -26,10 +34,16 @@ import { UnauthorizedException } from '../services/exceptions/MyExceptions';
 // 		console.log('modified');
 // 	}
 // })
+
 @ModelOptions({
 	options: { allowMixed: Severity.ALLOW },
+	schemaOptions: {
+		toJSON: {
+			virtuals: true,
+		},
+	},
 })
-export class ProtoUser {
+export class ProtoUser extends TimeStamps {
 	@prop({ required: true, trim: true })
 	public firstName!: string;
 
@@ -114,27 +128,25 @@ export class ProtoUser {
 }
 
 export class User extends ProtoUser {
-	@prop()
-	public rentedProperty?: string;
-
 	@prop({ default: 0 })
 	public numberOfStays?: number;
 
-	@prop()
-	public checkIn?: Date;
+	@prop({
+		ref: () => (doc: DocumentType<User>) => doc.from!,
+		foreignField: () => 'user',
+		localField: (doc: DocumentType<User>) => doc.local!,
+	})
+	public bookings?: Ref<Booking>[];
 
-	@prop()
-	public checkOut?: Date;
+	@prop({ default: '_id' })
+	public local?: string;
+
+	@prop({ default: 'Booking' })
+	public from?: string;
 }
-export class Admin extends ProtoUser {
-	@prop()
-	public bookedProperties?: [
-		{ property: string; checkIn: Date; checkOut: Date },
-	]; //ref with PropertyModel
-}
+
+export class Admin extends ProtoUser {}
 
 export const ProtoUserModel = getModelForClass(ProtoUser);
 export const UserModel = getDiscriminatorModelForClass(ProtoUserModel, User);
 export const AdminModel = getDiscriminatorModelForClass(ProtoUserModel, Admin);
-
-// export default { ProtoUserModel, UserModel, AdminModel };

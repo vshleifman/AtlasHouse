@@ -8,8 +8,6 @@ const checkAdmin = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		//@ts-ignore
 		if (req.user!.__t === UserType.ADMIN) {
 			next();
 		} else {

@@ -1,4 +1,5 @@
 import { DocumentType } from '@typegoose/typegoose';
+import PropertyModel, { Property } from '../models/PropertyModel';
 import { UserModel, User } from '../models/UserModel';
 import {
 	BadRequestException,
@@ -18,7 +19,7 @@ const getOneUser = async (_id: string): Promise<DocumentType<User>> => {
 		return result;
 	} catch (error) {
 		if (error.kind === 'ObjectId') {
-			throw new BadRequestException('Wrong User Id1');
+			throw new BadRequestException('Wrong User Id');
 		}
 		throw error;
 	}
