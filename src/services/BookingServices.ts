@@ -1,5 +1,6 @@
 import { DocumentType, mongoose } from '@typegoose/typegoose';
 import BookingModel, { Booking } from '../models/BookingModel';
+import handleDBExceptions from './exceptions/handleDBexceptions';
 import {
 	BadRequestException,
 	NotFoundException,
@@ -16,8 +17,22 @@ const deleteBooking = async (
 	return booking!;
 };
 
-const updateBooking = async () => {
-	console.log('not ready');
+const updateBooking = async (
+	id: mongoose.Types.ObjectId,
+	data: Partial<Booking>,
+): Promise<DocumentType<Booking>> => {
+	try {
+		const booking = await BookingModel.findByIdAndUpdate(id, data, {
+			new: true,
+		});
+		if (!booking) {
+			throw new NotFoundException('Booking Not Found');
+		}
+		return booking;
+	} catch (error) {
+		handleDBExceptions(error);
+		throw error;
+	}
 };
 
 const getBooking = async (
@@ -40,4 +55,14 @@ const getBooking = async (
 	}
 };
 
-export default { createBooking, deleteBooking, getBooking };
+const getBookings = async (): Promise<Partial<DocumentType<Booking>>> => {
+	return await BookingModel.find().populate('user').populate('property').exec();
+};
+
+export default {
+	createBooking,
+	deleteBooking,
+	getBooking,
+	updateBooking,
+	getBookings,
+};

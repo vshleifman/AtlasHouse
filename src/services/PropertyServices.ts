@@ -35,25 +35,26 @@ const addProperty = async (data: Property): Promise<DocumentType<Property>> => {
 	}
 };
 
-// const updateProperty = async (
-// 	_id: string,
-// 	data: Property,
-// ): Promise<Property | Result> => {
-// 	try {
-// 		const updates = Object.keys(data) as (keyof Property)[];
-// 		const property = await PropertyModel.findById(_id);
-
-// 		if (property?.name) {
-// 			updates.forEach(update => (property[update] = data[update]));
-// 			property.save();
-// 			return { result: property, code: '200' };
-// 		} else {
-// 			return { result: 'Property not found', code: '404' };
-// 		}
-// 	} catch (error) {
-// 		return { result: error, code: '500' };
-// 	}
-// };
+const updateProperty = async (
+	_id: mongoose.Types.ObjectId,
+	data: Partial<Property>,
+): Promise<Property> => {
+	try {
+		const property = await PropertyModel.findByIdAndUpdate(_id, data, {
+			new: true,
+		});
+		if (!property) {
+			throw new NotFoundException('Property Not Found');
+		}
+		return property;
+	} catch (error) {
+		if (error.kind === 'ObjectId') {
+			throw new BadRequestException(error.reason);
+		} else {
+			throw error;
+		}
+	}
+};
 
 const deleteProperty = async (
 	_id: mongoose.Types.ObjectId,
@@ -72,4 +73,10 @@ const deleteProperty = async (
 	}
 };
 
-export default { getProperties, getProperty, addProperty, deleteProperty };
+export default {
+	getProperties,
+	getProperty,
+	addProperty,
+	deleteProperty,
+	updateProperty,
+};

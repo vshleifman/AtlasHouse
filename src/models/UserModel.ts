@@ -38,7 +38,7 @@ export interface ProtoUser extends Base {}
 @ModelOptions({
 	options: { allowMixed: Severity.ALLOW },
 	schemaOptions: {
-		toJSON: {
+		toObject: {
 			virtuals: true,
 		},
 	},
@@ -91,6 +91,8 @@ export class ProtoUser extends TimeStamps {
 
 		delete userObject.password;
 		delete userObject.tokens;
+		delete userObject.local;
+		delete userObject.from;
 
 		return userObject;
 	}

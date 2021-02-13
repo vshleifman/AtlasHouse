@@ -10,13 +10,17 @@ import {
 	getName,
 } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
-import { Booking } from '../../virtualsTest/models/ModelC';
+import { Booking } from './BookingModel';
 
 export interface Property extends Base {}
 
 @ModelOptions({
 	options: { allowMixed: Severity.ALLOW },
-	schemaOptions: { toJSON: { virtuals: true } },
+	schemaOptions: {
+		toObject: {
+			virtuals: true,
+		},
+	},
 })
 export class Property extends TimeStamps {
 	@prop({ required: true, trim: true })
@@ -55,6 +59,16 @@ export class Property extends TimeStamps {
 
 	@prop({ default: 'Booking' })
 	public from?: string;
+
+	public toJSON(this: DocumentType<Property>): Partial<DocumentType<Property>> {
+		const user = this;
+		const userObject: Partial<DocumentType<Property>> = user.toObject();
+
+		delete userObject.local;
+		delete userObject.from;
+
+		return userObject;
+	}
 }
 
 const PropertyModel = getModelForClass(Property);

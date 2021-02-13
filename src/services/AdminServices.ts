@@ -1,6 +1,7 @@
 import { DocumentType } from '@typegoose/typegoose';
 import PropertyModel, { Property } from '../models/PropertyModel';
 import { UserModel, User } from '../models/UserModel';
+import handleDBExceptions from './exceptions/handleDBexceptions';
 import {
 	BadRequestException,
 	NotFoundException,
@@ -18,9 +19,7 @@ const getOneUser = async (_id: string): Promise<DocumentType<User>> => {
 		}
 		return result;
 	} catch (error) {
-		if (error.kind === 'ObjectId') {
-			throw new BadRequestException('Wrong User Id');
-		}
+		handleDBExceptions(error);
 		throw error;
 	}
 };
@@ -33,9 +32,9 @@ const deleteOneUser = async (_id: string): Promise<DocumentType<User>> => {
 		}
 		return result;
 	} catch (error) {
-		if (error.kind === 'ObjectId') {
-			throw new BadRequestException('Wrong User Id');
-		}
+		console.log({ error });
+
+		handleDBExceptions(error);
 		throw error;
 	}
 };
