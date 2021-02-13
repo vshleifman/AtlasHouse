@@ -1,11 +1,7 @@
 import { DocumentType } from '@typegoose/typegoose';
-import PropertyModel, { Property } from '../models/PropertyModel';
 import { UserModel, User } from '../models/UserModel';
 import handleDBExceptions from './exceptions/handleDBexceptions';
-import {
-	BadRequestException,
-	NotFoundException,
-} from './exceptions/MyExceptions';
+import { NotFoundException } from './exceptions/MyExceptions';
 
 const getAllUsers = async (): Promise<User[]> => {
 	return await UserModel.find();

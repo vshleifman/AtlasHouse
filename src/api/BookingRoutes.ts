@@ -1,8 +1,10 @@
-import { mongoose } from '@typegoose/typegoose';
+import { DocumentType, mongoose } from '@typegoose/typegoose';
 import express from 'express';
+import { Booking } from '../models/BookingModel';
 import checkAdmin from '../middleware/checkAdmin';
 import BookingServices from '../services/BookingServices';
 import { Req, UserType } from '../types/types';
+import { User } from 'models/UserModel';
 
 const router = express.Router();
 
@@ -12,7 +14,10 @@ router.get('/bookings', async (req: Req, res, next) => {
 		if (req.user?.__t === UserType.ADMIN) {
 			result = await BookingServices.getBookings();
 		} else if (req.user?.__t === UserType.USER) {
-			result = await req.user.populate('bookings').execPopulate();
+			const user = (await req.user
+				.populate('bookings')
+				.execPopulate()) as DocumentType<User>;
+			result = user.bookings as DocumentType<Booking>[];
 		}
 		res.status(200).send(result);
 	} catch (error) {

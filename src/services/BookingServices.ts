@@ -55,8 +55,12 @@ const getBooking = async (
 	}
 };
 
-const getBookings = async (): Promise<Partial<DocumentType<Booking>>> => {
-	return await BookingModel.find().populate('user').populate('property').exec();
+const getBookings = async (): Promise<DocumentType<Booking>[]> => {
+	const result = await BookingModel.find()
+		.populate('user')
+		.populate('property')
+		.exec();
+	return result;
 };
 
 export default {
