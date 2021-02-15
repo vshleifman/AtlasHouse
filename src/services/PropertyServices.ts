@@ -1,13 +1,19 @@
 import { DocumentType, mongoose } from '@typegoose/typegoose';
+import { QueryOptions } from 'types/types';
 import PropertyModel, { Property } from '../models/PropertyModel';
-import {
-	BadRequestException,
-	NotFoundException,
-	ServerException,
-} from './exceptions/MyExceptions';
+import handleDBExceptions from './exceptions/handleDBexceptions';
+import { NotFoundException, ServerException } from './exceptions/MyExceptions';
 
-const getProperties = async (): Promise<DocumentType<Property>[]> => {
-	return await PropertyModel.find();
+const getProperties = async (
+	match: Partial<Property>,
+	options: QueryOptions,
+): Promise<DocumentType<Property>[]> => {
+	try {
+		return await PropertyModel.find(match, null, options);
+	} catch (error) {
+		handleDBExceptions(error);
+		throw error;
+	}
 };
 
 const getProperty = async (
@@ -20,9 +26,7 @@ const getProperty = async (
 		}
 		return result;
 	} catch (error) {
-		if (error.kind === 'ObjectId') {
-			throw new BadRequestException('Wrong Property Id');
-		}
+		handleDBExceptions(error);
 		throw error;
 	}
 };
@@ -48,11 +52,8 @@ const updateProperty = async (
 		}
 		return property;
 	} catch (error) {
-		if (error.kind === 'ObjectId') {
-			throw new BadRequestException(error.reason);
-		} else {
-			throw error;
-		}
+		handleDBExceptions(error);
+		throw error;
 	}
 };
 
@@ -66,9 +67,7 @@ const deleteProperty = async (
 		}
 		return result;
 	} catch (error) {
-		if (error.kind === 'ObjectId') {
-			throw new BadRequestException('Wrong Property Id');
-		}
+		handleDBExceptions(error);
 		throw error;
 	}
 };

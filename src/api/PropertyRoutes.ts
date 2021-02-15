@@ -3,12 +3,16 @@ import express from 'express';
 import { Req, UserType } from '../types/types';
 import checkAdmin from '../middleware/checkAdmin';
 import PropertyServices from '../services/PropertyServices';
+import PropertyModel from '../models/PropertyModel';
+import extractQuery from './extractQuery';
 
 const router = express.Router();
 
 router.get('/properties', async (req, res, next) => {
+	const { match, options } = extractQuery(PropertyModel, req.query);
+
 	try {
-		const result = await PropertyServices.getProperties();
+		const result = await PropertyServices.getProperties(match, options);
 		res.send(result);
 	} catch (error) {
 		next(error);

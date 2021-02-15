@@ -1,6 +1,5 @@
 import { DocumentType } from '@typegoose/typegoose';
 import { Request } from 'express';
-import { ObjectId } from 'mongodb';
 import { ProtoUser } from '../models/UserModel';
 
 export interface Req extends Request {
@@ -11,4 +10,9 @@ export interface Req extends Request {
 export enum UserType {
 	ADMIN = 'Admin',
 	USER = 'User',
+}
+
+export interface QueryOptions {
+	limit?: number;
+	skip?: number;
 }

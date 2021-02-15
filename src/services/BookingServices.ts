@@ -1,10 +1,8 @@
 import { DocumentType, mongoose } from '@typegoose/typegoose';
+import { QueryOptions } from 'types/types';
 import BookingModel, { Booking } from '../models/BookingModel';
 import handleDBExceptions from './exceptions/handleDBexceptions';
-import {
-	BadRequestException,
-	NotFoundException,
-} from './exceptions/MyExceptions';
+import { NotFoundException } from './exceptions/MyExceptions';
 
 const createBooking = async (data: Booking): Promise<DocumentType<Booking>> => {
 	return await BookingModel.create(data);
@@ -48,19 +46,25 @@ const getBooking = async (
 		}
 		return booking;
 	} catch (error) {
-		if (error! instanceof NotFoundException) {
-			throw new BadRequestException(error.message);
-		}
+		handleDBExceptions(error);
 		throw error;
 	}
 };
 
-const getBookings = async (): Promise<DocumentType<Booking>[]> => {
-	const result = await BookingModel.find()
-		.populate('user')
-		.populate('property')
-		.exec();
-	return result;
+const getBookings = async (
+	match: Partial<Booking>,
+	options: QueryOptions,
+): Promise<DocumentType<Booking>[]> => {
+	try {
+		const result = await BookingModel.find(match, null, options)
+			.populate('user')
+			.populate('property')
+			.exec();
+		return result;
+	} catch (error) {
+		handleDBExceptions(error);
+		throw error;
+	}
 };
 
 export default {

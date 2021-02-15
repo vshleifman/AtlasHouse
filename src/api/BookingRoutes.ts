@@ -1,21 +1,26 @@
 import { DocumentType, mongoose } from '@typegoose/typegoose';
 import express from 'express';
-import { Booking } from '../models/BookingModel';
+import BookingModel, { Booking } from '../models/BookingModel';
 import checkAdmin from '../middleware/checkAdmin';
 import BookingServices from '../services/BookingServices';
 import { Req, UserType } from '../types/types';
 import { User } from 'models/UserModel';
+import extractQuery from './extractQuery';
 
 const router = express.Router();
 
 router.get('/bookings', async (req: Req, res, next) => {
+	const { match, options } = extractQuery(BookingModel, req.query);
+	console.log({ match });
+	console.log({ options });
+
 	try {
 		let result;
 		if (req.user?.__t === UserType.ADMIN) {
-			result = await BookingServices.getBookings();
+			result = await BookingServices.getBookings(match, options);
 		} else if (req.user?.__t === UserType.USER) {
 			const user = (await req.user
-				.populate('bookings')
+				.populate({ path: 'bookings', match, options })
 				.execPopulate()) as DocumentType<User>;
 			result = user.bookings as DocumentType<Booking>[];
 		}
