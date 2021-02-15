@@ -15,4 +15,5 @@ export enum UserType {
 export interface QueryOptions {
 	limit?: number;
 	skip?: number;
+	sort?: { [key: string]: number };
 }
