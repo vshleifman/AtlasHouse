@@ -1,8 +1,8 @@
 import { mongoose } from '@typegoose/typegoose';
-import { BadRequestException } from './MyExceptions';
+import { BadRequestException, NotFoundException } from './MyExceptions';
 
 const handleDBExceptions = (error: mongoose.CastError): void => {
-	if (error.kind === 'Boolean' || error.kind === 'ObjectId') {
+	if (!(error instanceof NotFoundException)) {
 		throw new BadRequestException(error.reason);
 	}
 };

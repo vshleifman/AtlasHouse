@@ -13,14 +13,13 @@ import exceptionHandler from './api/exceptionHandler';
 export const app = express();
 app.use(express.json());
 
+app.get('/', (req, res) => {
+	res.send('Hello Worald');
+});
 app.use(authRouter);
 app.use(userRouter);
 app.use(propertyRouter);
 app.use(bookingRouter);
 app.use(adminRouter);
-
-app.get('/', (req, res) => {
-	res.send('Hello Worald');
-});
 
 app.use(exceptionHandler);

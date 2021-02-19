@@ -3,16 +3,29 @@ import express from 'express';
 import BookingModel, { Booking } from '../models/BookingModel';
 import checkAdmin from '../middleware/checkAdmin';
 import BookingServices from '../services/BookingServices';
-import { Req, UserType } from '../types/types';
+import {
+	PartialSchemaClassIntersection,
+	QueryOptions,
+	Req,
+	UserType,
+} from '../types/types';
 import { User } from 'models/UserModel';
 import extractQuery from './extractQuery';
 
 const router = express.Router();
 
 router.get('/bookings', async (req: Req, res, next) => {
-	const { match, options } = extractQuery(BookingModel, req.query);
-	console.log({ match });
-	console.log({ options });
+	if (Object.keys(req.query).some(key => typeof key !== 'string')) {
+		return res.send('{}');
+	}
+
+	const { match, options } = extractQuery(
+		BookingModel,
+		req.query as Record<
+			string,
+			keyof PartialSchemaClassIntersection & keyof QueryOptions
+		>,
+	);
 
 	try {
 		let result;

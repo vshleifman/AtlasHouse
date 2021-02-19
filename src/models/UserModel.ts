@@ -17,7 +17,6 @@ import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { Property } from './PropertyModel';
 import { Booking } from './BookingModel';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ProtoUser extends Base {}
 
 @pre<ProtoUser>('save', async function () {
@@ -140,10 +139,10 @@ export class User extends ProtoUser {
 	})
 	public bookings?: Ref<Booking>[];
 
-	@prop({ default: '_id' })
+	@prop()
 	public local?: string;
 
-	@prop({ default: 'Booking' })
+	@prop()
 	public from?: string;
 }
 

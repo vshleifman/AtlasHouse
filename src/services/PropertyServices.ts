@@ -1,4 +1,5 @@
-import { DocumentType, mongoose } from '@typegoose/typegoose';
+import { DocumentType, getName, mongoose } from '@typegoose/typegoose';
+import { Booking } from '../models/BookingModel';
 import { QueryOptions } from 'types/types';
 import PropertyModel, { Property } from '../models/PropertyModel';
 import handleDBExceptions from './exceptions/handleDBexceptions';
@@ -33,7 +34,11 @@ const getProperty = async (
 
 const addProperty = async (data: Property): Promise<DocumentType<Property>> => {
 	try {
-		return await PropertyModel.create(data);
+		return await PropertyModel.create({
+			...data,
+			local: '_id',
+			from: getName(Booking),
+		});
 	} catch (error) {
 		throw new ServerException(error);
 	}

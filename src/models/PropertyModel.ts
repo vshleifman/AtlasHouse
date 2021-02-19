@@ -3,11 +3,8 @@ import {
 	getModelForClass,
 	ModelOptions,
 	Severity,
-	mongoose,
-	ReturnModelType,
 	DocumentType,
 	Ref,
-	getName,
 } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { Booking } from './BookingModel';
@@ -53,11 +50,9 @@ export class Property extends TimeStamps {
 		localField: (doc: DocumentType<Property>) => doc.local!,
 	})
 	public bookings?: Ref<Booking>[];
-
-	@prop({ default: '_id' })
+	@prop()
 	public local?: string;
-
-	@prop({ default: 'Booking' })
+	@prop()
 	public from?: string;
 
 	public toJSON(this: DocumentType<Property>): Partial<DocumentType<Property>> {

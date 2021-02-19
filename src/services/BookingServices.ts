@@ -5,14 +5,24 @@ import handleDBExceptions from './exceptions/handleDBexceptions';
 import { NotFoundException } from './exceptions/MyExceptions';
 
 const createBooking = async (data: Booking): Promise<DocumentType<Booking>> => {
-	return await BookingModel.create(data);
+	try {
+		return await BookingModel.create(data);
+	} catch (error) {
+		handleDBExceptions(error);
+		throw error;
+	}
 };
 
 const deleteBooking = async (
 	_id: mongoose.Types.ObjectId,
 ): Promise<DocumentType<Booking>> => {
-	const booking = await BookingModel.findByIdAndDelete(_id);
-	return booking!;
+	try {
+		const booking = await BookingModel.findByIdAndDelete(_id);
+		return booking!;
+	} catch (error) {
+		handleDBExceptions(error);
+		throw error;
+	}
 };
 
 const updateBooking = async (

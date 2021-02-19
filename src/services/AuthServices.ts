@@ -1,4 +1,4 @@
-import { DocumentType } from '@typegoose/typegoose';
+import { DocumentType, getName } from '@typegoose/typegoose';
 import { UserType } from '../types/types';
 import {
 	AdminModel,
@@ -23,7 +23,11 @@ const signup = async (
 			return { user, token };
 		}
 		if (data.type === UserType.USER) {
-			const user = await UserModel.create(data.user);
+			const user = await UserModel.create({
+				...data.user,
+				local: '_id',
+				from: getName(User),
+			});
 			const token = await user.generateAuthToken();
 			return { user, token };
 		}

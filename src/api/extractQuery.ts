@@ -4,13 +4,14 @@ import { Property } from 'models/PropertyModel';
 import { ProtoUser } from 'models/UserModel';
 import { PartialSchemaClassIntersection, QueryOptions } from 'types/types';
 
-type Match = {
-	[key: string]: keyof PartialSchemaClassIntersection;
-};
+type Match = Record<string, keyof PartialSchemaClassIntersection>;
 
 const extractQuery = (
 	model: ReturnModelType<typeof Booking | typeof ProtoUser | typeof Property>,
-	query: any,
+	query: Record<
+		string,
+		keyof PartialSchemaClassIntersection & keyof QueryOptions
+	>,
 ): {
 	match: Match;
 	options: QueryOptions;

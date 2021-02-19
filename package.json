@@ -31,6 +31,7 @@
 	"dependencies": {
 		"@types/axios": "^0.14.0",
 		"@types/bcrypt": "^3.0.0",
+		"@types/cors": "^2.8.10",
 		"@types/faker": "^5.1.6",
 		"@types/jsonwebtoken": "^8.5.0",
 		"@types/mongodb": "^3.6.6",
@@ -38,6 +39,7 @@
 		"@types/supertest": "^2.0.10",
 		"axios": "^0.21.1",
 		"bcrypt": "^5.0.0",
+		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
 		"env-cmd": "^10.1.0",
 		"faker": "^5.3.1",

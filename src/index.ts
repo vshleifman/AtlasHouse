@@ -1,5 +1,3 @@
-// import { config } from 'dotenv';
-// config({ path: '../.env.test' });
 import { app } from './app';
 import './mongoose';
 
