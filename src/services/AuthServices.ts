@@ -8,7 +8,7 @@ import {
 	ProtoUser,
 	ProtoUserModel,
 } from '../models/UserModel';
-import { ServerException } from './exceptions/MyExceptions';
+import handleDBExceptions from './exceptions/handleDBexceptions';
 
 const signup = async (
 	data: { user: ProtoUser; type: string }, // partial?
@@ -33,7 +33,8 @@ const signup = async (
 		}
 		throw new Error('Specify user type');
 	} catch (error) {
-		throw new ServerException(error);
+		handleDBExceptions(error);
+		throw error;
 	}
 };
 
@@ -44,20 +45,30 @@ const signin = async (
 	user: DocumentType<Admin> | DocumentType<User>;
 	token: string;
 }> => {
-	const user = (await ProtoUserModel.findByCredentials(
-		email,
-		password,
-	)) as DocumentType<ProtoUser>;
-	const token = await user.generateAuthToken();
-	return { user, token };
+	try {
+		const user = (await ProtoUserModel.findByCredentials(
+			email,
+			password,
+		)) as DocumentType<ProtoUser>;
+		const token = await user.generateAuthToken();
+		return { user, token };
+	} catch (error) {
+		handleDBExceptions(error);
+		throw error;
+	}
 };
 
 const signout = async (
 	user: DocumentType<ProtoUser>,
 	reqToken: string,
 ): Promise<void> => {
-	user.tokens = user.tokens.filter(token => token.token !== reqToken);
-	await user.save();
+	try {
+		user.tokens = user.tokens.filter(token => token.token !== reqToken);
+		await user.save();
+	} catch (error) {
+		handleDBExceptions(error);
+		throw error;
+	}
 };
 
 const signoutAll = async (user: DocumentType<ProtoUser>): Promise<void> => {

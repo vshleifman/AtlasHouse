@@ -9,7 +9,7 @@ import {
 	Req,
 	UserType,
 } from '../types/types';
-import { User } from 'models/UserModel';
+import { User } from '../models/UserModel';
 import extractQuery from './extractQuery';
 
 const router = express.Router();

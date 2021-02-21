@@ -10,6 +10,8 @@ const auth = async (
 	next: NextFunction,
 ): Promise<void> => {
 	try {
+		console.log(req.headers);
+
 		const token = req.header('Authorization')?.replace('Bearer ', '');
 
 		if (!token) {

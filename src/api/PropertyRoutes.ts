@@ -10,6 +10,7 @@ import checkAdmin from '../middleware/checkAdmin';
 import PropertyServices from '../services/PropertyServices';
 import PropertyModel from '../models/PropertyModel';
 import extractQuery from './extractQuery';
+import auth from '../middleware/auth';
 
 const router = express.Router();
 
@@ -38,7 +39,7 @@ router.get('/properties/:id', async (req: Req, res, next) => {
 			result = await (await PropertyServices.getProperty(id))
 				.populate('bookings')
 				.execPopulate();
-		} else if (req.user?.__t === UserType.USER) {
+		} else {
 			result = await PropertyServices.getProperty(id);
 		}
 		res.status(200).send(result);
@@ -46,6 +47,8 @@ router.get('/properties/:id', async (req: Req, res, next) => {
 		next(error);
 	}
 });
+
+router.use(auth);
 
 router.post('/properties', checkAdmin, async (req, res, next) => {
 	try {

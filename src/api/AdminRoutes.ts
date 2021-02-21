@@ -3,7 +3,7 @@ import AdminServices from '../services/AdminServices';
 import checkAdmin from '../middleware/checkAdmin';
 import { PartialSchemaClassIntersection, QueryOptions, Req } from 'types/types';
 import extractQuery from './extractQuery';
-import { UserModel } from 'models/UserModel';
+import { UserModel } from '../models/UserModel';
 
 const router = express.Router();
 
