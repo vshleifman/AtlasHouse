@@ -1,21 +1,9 @@
-import { MongoClient } from 'mongodb';
+import { app } from './app';
+import './mongoose';
 
-const url = 'mongodb://mongo:27017';
+const port = process.env.PORT || 3001;
 
-const dbName = 'AtlasHouse';
-
-const client = new MongoClient(url, { useUnifiedTopology: true });
-
-const run = async () => {
-	try {
-		await client.connect();
-		console.log('Connected');
-
-		const db = client.db(dbName);
-		const collection = db.collection('test');
-	} finally {
-		await client.close();
-	}
-};
-
-run().catch(console.dir);
+app.listen(port, () => {
+	console.log('------------------------------');
+	console.log(`App listening on port ${port}`);
+});
