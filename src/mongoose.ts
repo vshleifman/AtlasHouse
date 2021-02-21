@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 mongoose.connect(
-	process.env.MONGODB_URL || 'mongodb://localhost:2717/AtlasHouse-api',
+	process.env.MONGODB_URL || 'mongodb://mongo:27017/AtlasHouse-api',
 	{
 		useNewUrlParser: true,
 		useUnifiedTopology: true,

@@ -4,10 +4,10 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest --setupFiles dotenv/config --watch",
+		"test": "jest --watch",
 		"start": "if test \"$NODE_ENV\" = \"production\"; then npm run start:prod; else npm run start:dev; fi",
 		"start:prod": "ts-node src",
-		"start:dev": "ts-node-dev -r dotenv/config  --respawn --poll src"
+		"start:dev": "ts-node-dev --respawn --poll src"
 	},
 	"author": "",
 	"license": "ISC",

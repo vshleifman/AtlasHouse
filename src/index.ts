@@ -1,7 +1,11 @@
 import { app } from './app';
 import './mongoose';
 
-const port = process.env.PORT || 3001;
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const port = 3001;
 
 app.listen(port, () => {
 	console.log('------------------------------');
