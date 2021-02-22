@@ -81,8 +81,8 @@ export class ProtoUser extends TimeStamps {
 	@prop()
 	public country?: string;
 
-	@prop({ required: true })
-	public tokens!: { token: string }[];
+	@prop({ required: true, default: [] })
+	public tokens?: { token: string }[];
 
 	public toJSON(this: DocumentType<ProtoUser>): Partial<DocumentType<User>> {
 		const user = this;
@@ -122,7 +122,7 @@ export class ProtoUser extends TimeStamps {
 			process.env['JWT_SECRET'] || 'some.string',
 		);
 
-		user.tokens = user.tokens.concat({ token });
+		user.tokens = user.tokens!.concat({ token });
 		await user.save();
 		return token;
 	}
