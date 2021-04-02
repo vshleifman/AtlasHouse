@@ -22,10 +22,10 @@ export class Booking extends TimeStamps {
 	public user!: mongoose.Types.ObjectId;
 
 	@prop({ required: true })
-	checkIn!: Date;
+	checkIn!: string;
 
 	@prop({ required: true })
-	checkOut!: Date;
+	checkOut!: string;
 
 	@prop({ default: false })
 	paidFor?: boolean;

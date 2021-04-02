@@ -8,9 +8,24 @@ import { NotFoundException, ServerException } from './exceptions/MyExceptions';
 const getProperties = async (
 	match: Partial<Property>,
 	options: QueryOptions,
+	dateMatch: { checkIn: string; checkOut: string },
 ): Promise<DocumentType<Property>[]> => {
 	try {
-		return await PropertyModel.find(match, null, options);
+		let properties = await PropertyModel.find(match, null, options).populate(
+			'bookings',
+		);
+
+		if (dateMatch.checkIn) {
+			const filteredResult = properties.filter(doc =>
+				(doc.bookings as Booking[]).every(
+					booking =>
+						booking.checkIn > dateMatch.checkIn ||
+						booking.checkOut < dateMatch.checkOut,
+				),
+			);
+			properties = filteredResult;
+		}
+		return properties;
 	} catch (error) {
 		handleDBExceptions(error);
 		throw error;

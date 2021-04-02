@@ -1,9 +1,8 @@
 import express from 'express';
 import { Req } from '../types/types';
 import auth from '../middleware/auth';
-import UserServices from '../services/UserServices';
+import UserService from '../services/UserService';
 import { UnauthorizedException } from '../services/exceptions/MyExceptions';
-import { mongoose } from '@typegoose/typegoose';
 
 const router = express.Router();
 
@@ -22,22 +21,24 @@ router.get('/users/me', async (req: Req, res, next) => {
 	}
 });
 
-router.patch('/users/:id', async (req, res, next) => {
-	const id = (req.params.id as unknown) as mongoose.Types.ObjectId;
-
+router.patch('/users/me', async (req: Req, res, next) => {
 	try {
-		const result = await UserServices.update(id, req.body);
-		res.status(200).send(result);
+		if (req.user) {
+			const result = await UserService.update(req.user._id, req.body);
+			res.status(200).send(result);
+		} else {
+			throw new UnauthorizedException();
+		}
 	} catch (error) {
 		next(error);
 	}
 });
 
 router.delete('/users/me', async (req: Req, res, next) => {
-	const id = (req.user!._id as unknown) as string;
+	const id = req.user!._id;
 
 	try {
-		const result = await UserServices.deleteOne(id);
+		const result = await UserService.deleteOne(id);
 		res.status(200).send(result);
 	} catch (error) {
 		next(error);

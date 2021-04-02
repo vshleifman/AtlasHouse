@@ -1,5 +1,5 @@
 import express from 'express';
-import AdminServices from '../services/AdminServices';
+import AdminService from '../services/AdminService';
 import checkAdmin from '../middleware/checkAdmin';
 import { PartialSchemaClassIntersection, QueryOptions, Req } from 'types/types';
 import extractQuery from './extractQuery';
@@ -18,7 +18,7 @@ router.get('/users', async (req: Req, res, next) => {
 		>,
 	);
 	try {
-		const result = await AdminServices.getAllUsers(match, options);
+		const result = await AdminService.getAllUsers(match, options);
 		res.status(200).send(result);
 	} catch (error) {
 		next(error);
@@ -29,7 +29,7 @@ router.get('/users/:id', async (req: Req, res, next) => {
 	const id = req.params.id;
 
 	try {
-		const result = await AdminServices.getOneUser(id);
+		const result = await AdminService.getOneUser(id);
 		res.status(200).send(result);
 	} catch (error) {
 		next(error);
@@ -40,7 +40,7 @@ router.delete('/users/:id', async (req: Req, res, next) => {
 	const id = req.params.id;
 
 	try {
-		const result = await AdminServices.deleteOneUser(id);
+		const result = await AdminService.deleteOneUser(id);
 		res.status(200).send(result);
 	} catch (error) {
 		next(error);

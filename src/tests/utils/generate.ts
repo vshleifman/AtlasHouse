@@ -3,26 +3,26 @@ import bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { Req } from 'types/types';
 import jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 
-const getId = faker.random.uuid;
+const getId = () => faker.random.uuid();
 const getPassword = (...args: []) => `!@#$${faker.internet.password(...args)}`;
-const getFirstName = faker.name.firstName();
-const getLastName = faker.name.lastName();
-const getEmail = faker.internet.email();
+const getFirstName = () => faker.name.firstName();
+const getLastName = () => faker.name.lastName();
+const getEmail = () => faker.internet.email();
 
 export const buildUser = ({ ...overrides }) => {
-	const _id = getId;
-	const token = jwt.sign({ _id: _id.toString() }, process.env.JWT_SECRET!);
+	const _id = getId() as ObjectId | (string & ObjectId);
+	const token = jwt.sign({ _id: _id!.toString() }, process.env.JWT_SECRET!);
 	return {
 		_id,
-		firstName: getFirstName,
-		lastName: getLastName,
-		email: getEmail,
+		firstName: getFirstName(),
+		lastName: getLastName(),
+		email: getEmail(),
 		password: getPassword(),
 		tokens: [
 			{
-				token:
-					'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDE4MGRjZDAwMzdmNzAwMjZmNDU5YzciLCJpYXQiOjE2MTIxODkxMzN9.OkorCxN7EcQhp91YqvJQl6oYFv_agdSWoAnTi4107MU',
+				token,
 			},
 		],
 		...overrides,

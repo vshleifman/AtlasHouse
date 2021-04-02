@@ -9,6 +9,7 @@ import {
 	ProtoUserModel,
 } from '../models/UserModel';
 import handleDBExceptions from './exceptions/handleDBexceptions';
+import { BadRequestException } from './exceptions/MyExceptions';
 
 const signup = async (
 	data: { user: ProtoUser; type: string }, // partial?
@@ -31,7 +32,7 @@ const signup = async (
 			const token = await user.generateAuthToken();
 			return { user, token };
 		}
-		throw new Error('Specify user type');
+		throw new BadRequestException('Specify user type');
 	} catch (error) {
 		handleDBExceptions(error);
 		throw error;
@@ -63,7 +64,7 @@ const signout = async (
 	reqToken: string,
 ): Promise<void> => {
 	try {
-		user.tokens = user.tokens.filter(token => token.token !== reqToken);
+		user.tokens = user.tokens!.filter(token => token.token !== reqToken);
 		await user.save();
 	} catch (error) {
 		handleDBExceptions(error);

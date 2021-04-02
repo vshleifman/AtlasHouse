@@ -30,26 +30,30 @@ export class Property extends TimeStamps {
 	public price?: number;
 
 	@prop({ default: true })
-	public available?: boolean;
-
-	@prop({ default: true })
 	public isCleaned?: boolean;
 
 	@prop()
 	public mainPicture?: Buffer;
 
 	@prop()
-	public pictures?: Buffer[];
+	public amenities?: {
+		balcony: boolean;
+		bathtub: boolean;
+	};
+
+	@prop({ default: [] })
+	public pictures!: Buffer[];
 
 	@prop()
 	public description?: string;
 
 	@prop({
+		default: [],
 		ref: () => (doc: DocumentType<Property>) => doc.from!,
 		foreignField: () => 'property',
 		localField: (doc: DocumentType<Property>) => doc.local!,
 	})
-	public bookings?: Ref<Booking>[];
+	public bookings!: Ref<Booking>[];
 	@prop()
 	public local?: string;
 	@prop()

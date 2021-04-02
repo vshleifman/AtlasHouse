@@ -7,14 +7,12 @@ import {
 	ModelOptions,
 	getDiscriminatorModelForClass,
 	Ref,
-	getName,
 } from '@typegoose/typegoose';
 import isEmail from 'validator/lib/isEmail';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UnauthorizedException } from '../services/exceptions/MyExceptions';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
-import { Property } from './PropertyModel';
 import { Booking } from './BookingModel';
 
 export interface ProtoUser extends Base {}
@@ -25,15 +23,6 @@ export interface ProtoUser extends Base {}
 		user.password = await bcrypt.hash(user.password, 8);
 	}
 })
-// @pre<User>('findOneAndUpdate', async function () {
-// 	const user = this;
-
-// 	if (user.isModified('password')) {
-// 		user.password = await bcrypt.hash(user.password, 8);
-// 		console.log('modified');
-// 	}
-// })
-
 @ModelOptions({
 	options: { allowMixed: Severity.ALLOW },
 	schemaOptions: {
@@ -101,6 +90,7 @@ export class ProtoUser extends TimeStamps {
 		password: string,
 	): Promise<ProtoUser> {
 		const user = await ProtoUserModel.findOne({ email });
+
 		if (!user) {
 			throw new UnauthorizedException('Unable to login');
 		}

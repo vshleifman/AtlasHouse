@@ -4,7 +4,7 @@ import {
 	buildNext,
 	buildUser,
 } from '../../tests/utils/generate';
-import UserServices from '../../services/UserServices';
+import UserServices from '../../services/UserService';
 import axios from 'axios';
 import request from 'supertest';
 import { app } from '../../app';

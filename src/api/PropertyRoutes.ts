@@ -7,7 +7,7 @@ import {
 	UserType,
 } from '../types/types';
 import checkAdmin from '../middleware/checkAdmin';
-import PropertyServices from '../services/PropertyServices';
+import PropertyService from '../services/PropertyService';
 import PropertyModel from '../models/PropertyModel';
 import extractQuery from './extractQuery';
 import auth from '../middleware/auth';
@@ -15,7 +15,7 @@ import auth from '../middleware/auth';
 const router = express.Router();
 
 router.get('/properties', async (req, res, next) => {
-	const { match, options } = extractQuery(
+	const { match, popMatch, options } = extractQuery(
 		PropertyModel,
 		req.query as Record<
 			string,
@@ -24,7 +24,12 @@ router.get('/properties', async (req, res, next) => {
 	);
 
 	try {
-		const result = await PropertyServices.getProperties(match, options);
+		const result = await PropertyService.getProperties(
+			match,
+			options,
+			popMatch,
+		);
+
 		res.send(result);
 	} catch (error) {
 		next(error);
@@ -36,11 +41,11 @@ router.get('/properties/:id', async (req: Req, res, next) => {
 		const id = (req.params.id as unknown) as mongoose.Types.ObjectId;
 		let result;
 		if (req.user?.__t === UserType.ADMIN) {
-			result = await (await PropertyServices.getProperty(id))
+			result = await (await PropertyService.getProperty(id))
 				.populate('bookings')
 				.execPopulate();
 		} else {
-			result = await PropertyServices.getProperty(id);
+			result = await PropertyService.getProperty(id);
 		}
 		res.status(200).send(result);
 	} catch (error) {
@@ -52,7 +57,7 @@ router.use(auth);
 
 router.post('/properties', checkAdmin, async (req, res, next) => {
 	try {
-		const result = await PropertyServices.addProperty(req.body);
+		const result = await PropertyService.addProperty(req.body);
 		res.send(result);
 	} catch (error) {
 		next(error);
@@ -62,7 +67,7 @@ router.post('/properties', checkAdmin, async (req, res, next) => {
 router.patch('/properties/:id', checkAdmin, async (req, res, next) => {
 	try {
 		const id = (req.params.id as unknown) as mongoose.Types.ObjectId;
-		const result = await PropertyServices.updateProperty(id, req.body);
+		const result = await PropertyService.updateProperty(id, req.body);
 		res.status(200).send(result);
 	} catch (error) {
 		next(error);
@@ -72,7 +77,7 @@ router.patch('/properties/:id', checkAdmin, async (req, res, next) => {
 router.delete('/properties/:id', checkAdmin, async (req, res, next) => {
 	try {
 		const id = (req.params.id as unknown) as mongoose.Types.ObjectId;
-		const result = await PropertyServices.deleteProperty(id);
+		const result = await PropertyService.deleteProperty(id);
 		res.send(result);
 	} catch (error) {
 		next(error);

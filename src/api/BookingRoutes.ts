@@ -2,7 +2,7 @@ import { DocumentType, mongoose } from '@typegoose/typegoose';
 import express from 'express';
 import BookingModel, { Booking } from '../models/BookingModel';
 import checkAdmin from '../middleware/checkAdmin';
-import BookingServices from '../services/BookingServices';
+import BookingService from '../services/BookingService';
 import {
 	PartialSchemaClassIntersection,
 	QueryOptions,
@@ -11,6 +11,7 @@ import {
 } from '../types/types';
 import { User } from '../models/UserModel';
 import extractQuery from './extractQuery';
+// import moment from 'moment';
 
 const router = express.Router();
 
@@ -30,7 +31,7 @@ router.get('/bookings', async (req: Req, res, next) => {
 	try {
 		let result;
 		if (req.user?.__t === UserType.ADMIN) {
-			result = await BookingServices.getBookings(match, options);
+			result = await BookingService.getBookings(match, options);
 		} else if (req.user?.__t === UserType.USER) {
 			const user = (await req.user
 				.populate({ path: 'bookings', match, options })
@@ -44,8 +45,10 @@ router.get('/bookings', async (req: Req, res, next) => {
 });
 
 router.post('/bookings', async (req: Req, res, next) => {
+	// req.body.checkIn = moment(req.body.checkIn).toISOString();
+	// req.body.checkOut = moment(req.body.checkOut).toISOString();
 	try {
-		const result = await BookingServices.createBooking({
+		const result = await BookingService.createBooking({
 			user: req.user!._id,
 			...req.body,
 		});
@@ -58,7 +61,7 @@ router.post('/bookings', async (req: Req, res, next) => {
 router.get('/bookings/:id', async (req, res, next) => {
 	try {
 		const id = (req.params.id as unknown) as mongoose.Types.ObjectId;
-		const result = await BookingServices.getBooking(id);
+		const result = await BookingService.getBooking(id);
 		res.send(result);
 	} catch (error) {
 		next(error);
@@ -68,7 +71,7 @@ router.get('/bookings/:id', async (req, res, next) => {
 router.patch('/bookings/:id', checkAdmin, async (req, res, next) => {
 	try {
 		const id = (req.params.id as unknown) as mongoose.Types.ObjectId;
-		const result = await BookingServices.updateBooking(id, req.body);
+		const result = await BookingService.updateBooking(id, req.body);
 		res.send(result);
 	} catch (error) {
 		next(error);
@@ -78,7 +81,7 @@ router.patch('/bookings/:id', checkAdmin, async (req, res, next) => {
 router.delete('/bookings/:id', checkAdmin, (req, res, next) => {
 	try {
 		const id = (req.params.id as unknown) as mongoose.Types.ObjectId;
-		const result = BookingServices.deleteBooking(id);
+		const result = BookingService.deleteBooking(id);
 		res.send(result);
 	} catch (error) {
 		next(error);

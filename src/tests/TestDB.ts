@@ -1,5 +1,6 @@
 import { UserModel } from '../models/UserModel';
 import mongoose from 'mongoose';
+import { buildUser } from './utils/generate';
 
 class TestDB {
 	#db: mongoose.Connection;
@@ -9,11 +10,13 @@ class TestDB {
 	}
 
 	#seed = async () => {
+		const userData = buildUser({});
+
 		await UserModel.create({
-			firstName: 'Test',
-			lastName: 'User',
 			email: 'seed@test.com',
-			password: '12345678',
+			firstName: userData.firstName,
+			lastName: userData.lastName,
+			password: '1234567',
 		});
 	};
 
@@ -30,9 +33,10 @@ class TestDB {
 				if (err) console.error(err);
 			},
 		);
+	}
 
+	async drop() {
 		this.#db.dropDatabase();
-
 		await this.#seed();
 	}
 }

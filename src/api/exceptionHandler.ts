@@ -42,6 +42,8 @@ const exceptionHandler = (
 	}
 
 	if (error instanceof BadRequestException) {
+		console.log(error.message);
+
 		sendError(res, 400, ApiError.BadRequest, error.message);
 	}
 

@@ -37,8 +37,6 @@ const deleteOneUser = async (_id: string): Promise<DocumentType<User>> => {
 		}
 		return result;
 	} catch (error) {
-		console.log({ error });
-
 		handleDBExceptions(error);
 		throw error;
 	}
