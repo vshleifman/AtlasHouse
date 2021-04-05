@@ -14,13 +14,13 @@ const extractQuery = (
 	>,
 ): {
 	match: Match;
-	popMatch: { checkIn: string; checkOut: string };
+	dateMatch: { desiredCheckOut: string; desiredCheckIn: string };
 	options: QueryOptions;
 } => {
 	const modelObject = new model();
 
 	const match: Match = {};
-	const popMatch = { checkIn: String(), checkOut: String() };
+	const dateMatch = { desiredCheckIn: String(), desiredCheckOut: String() };
 	const options: QueryOptions = { sort: {} };
 
 	Object.keys(query).forEach(key => {
@@ -43,13 +43,13 @@ const extractQuery = (
 			const fromDate = parts[0].split('_');
 			const toDate = parts[1].split('_');
 
-			popMatch.checkIn = toDate[1];
-			popMatch.checkOut = fromDate[1];
+			dateMatch.desiredCheckOut = toDate[1];
+			dateMatch.desiredCheckIn = fromDate[1];
 		} else {
 			options[key] = parseInt(query[key]);
 		}
 	});
-	return { match, popMatch, options };
+	return { match, dateMatch, options };
 };
 
 export default extractQuery;

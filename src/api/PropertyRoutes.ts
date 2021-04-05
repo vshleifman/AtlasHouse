@@ -15,7 +15,7 @@ import auth from '../middleware/auth';
 const router = express.Router();
 
 router.get('/properties', async (req, res, next) => {
-	const { match, popMatch, options } = extractQuery(
+	const { match, dateMatch, options } = extractQuery(
 		PropertyModel,
 		req.query as Record<
 			string,
@@ -27,7 +27,7 @@ router.get('/properties', async (req, res, next) => {
 		const result = await PropertyService.getProperties(
 			match,
 			options,
-			popMatch,
+			dateMatch,
 		);
 
 		res.send(result);
