@@ -17,6 +17,8 @@ const extractQuery = (
 	dateMatch: { desiredCheckOut: string; desiredCheckIn: string };
 	options: QueryOptions;
 } => {
+	console.log({ query });
+
 	const modelObject = new model();
 
 	const match: Match = {};
@@ -27,9 +29,11 @@ const extractQuery = (
 		if (key in modelObject) {
 			if (key === 'amenities') {
 				const amenityFilter: Record<string, string> = {};
-				const amenity = query[key].split(':');
+				const noQuotesAmenities = query[key].replace(/"|{|}/g, '');
+				const amenity = noQuotesAmenities.split(':');
 
 				amenityFilter[amenity[0]] = amenity[1];
+
 				// @ts-ignore
 				match[key] = amenityFilter;
 			} else {
@@ -39,9 +43,11 @@ const extractQuery = (
 			const parts = query[key].split(':');
 			options.sort![parts[0]] = parts[1] === 'desc' ? -1 : 1;
 		} else if (key === 'dateRange') {
-			const parts = query[key].split(';');
-			const fromDate = parts[0].split('_');
-			const toDate = parts[1].split('_');
+			const noQuotesDates = query[key].replace(/"|{|}/g, '');
+
+			const parts = noQuotesDates.split(',');
+			const fromDate = parts[0].split(':');
+			const toDate = parts[1].split(':');
 
 			dateMatch.desiredCheckOut = toDate[1];
 			dateMatch.desiredCheckIn = fromDate[1];

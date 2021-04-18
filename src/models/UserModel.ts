@@ -74,9 +74,20 @@ export class ProtoUser extends TimeStamps {
 	public tokens?: { token: string }[];
 
 	public toJSON(this: DocumentType<ProtoUser>): Partial<DocumentType<User>> {
-		const user = this;
-		const userObject: Partial<DocumentType<User>> = user.toObject();
+		interface UserObject extends Partial<DocumentType<User>> {
+			role: number;
+		}
 
+		const user = this;
+		const userObject: UserObject = user.toObject();
+
+		userObject.__t === 'Admin'
+			? (userObject.role = 2)
+			: userObject.__t === 'User'
+			? (userObject.role = 1)
+			: (userObject.role = 0);
+
+		delete userObject.__t;
 		delete userObject.password;
 		delete userObject.tokens;
 		delete userObject.local;
