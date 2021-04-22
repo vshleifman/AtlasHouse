@@ -17,8 +17,6 @@ const extractQuery = (
 	dateMatch: { desiredCheckOut: string; desiredCheckIn: string };
 	options: QueryOptions;
 } => {
-	console.log({ query });
-
 	const modelObject = new model();
 
 	const match: Match = {};

@@ -11,6 +11,9 @@ import PropertyService from '../services/PropertyService';
 import PropertyModel from '../models/PropertyModel';
 import extractQuery from './extractQuery';
 import auth from '../middleware/auth';
+import multer from 'multer';
+
+const upload = multer({ dest: 'uploads' });
 
 const router = express.Router();
 
@@ -55,14 +58,25 @@ router.get('/properties/:id', async (req: Req, res, next) => {
 
 router.use(auth);
 
-router.post('/properties', checkAdmin, async (req, res, next) => {
-	try {
-		const result = await PropertyService.addProperty(req.body);
-		res.send(result);
-	} catch (error) {
-		next(error);
-	}
-});
+router.post(
+	'/properties',
+	// checkAdmin,
+	upload.single('mainPhoto'),
+	async (req, res, next) => {
+		try {
+			// const result = await PropertyService.addProperty(req.body);
+			// console.log({ body: req.body });
+			// console.log({ file: req.file });
+			console.log(req);
+
+			res.send(req.files);
+		} catch (error) {
+			console.log(error);
+
+			next(error);
+		}
+	},
+);
 
 router.patch('/properties/:id', checkAdmin, async (req, res, next) => {
 	try {

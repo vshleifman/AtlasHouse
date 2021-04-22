@@ -10,8 +10,6 @@ const update = async (
 	id: mongoose.Types.ObjectId,
 	data: Partial<User>,
 ): Promise<DocumentType<User>> => {
-	console.log({ data });
-
 	try {
 		const updates = Object.keys(data);
 
@@ -30,8 +28,6 @@ const update = async (
 		}
 
 		updates.forEach(update => {
-			console.log({ update });
-
 			if (allowedUpdates.includes(update)) {
 				//@ts-ignore
 				user[update] = data[update];
@@ -42,8 +38,6 @@ const update = async (
 		await user.save();
 		return user;
 	} catch (error) {
-		console.log(error);
-
 		handleDBExceptions(error);
 		throw error;
 	}
